@@ -76,18 +76,19 @@
     });
 
     recognition.onresult = (event) => {
-      let interimTranscript = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
+  let interimTranscript = "";
+  for (let i = event.resultIndex; i < event.results.length; i++) {
+    const transcript = event.results[i][0].transcript;
 
-      // Hvis resultatet er final (færdigbehandlet)
-      if (event.results[i].isFinal) {
-        finalTranscript += transcript + " ";
-      } else {
-        // Hvis resultatet er interim (delvist)
-        interimTranscript += transcript + " ";
-      }
+    // Hvis resultatet er interim (delvist), gem det
+    if (!event.results[i].isFinal) {
+      interimTranscript += transcript + " ";
+    }
   }
+
+  // Opdater transkription i UI med delvise resultater
+  transcripts.textContent = interimTranscript.trim();
+};
 
   // Opdater transkription i UI
   transcripts.textContent = finalTranscript.trim() + " " + interimTranscript.trim();
