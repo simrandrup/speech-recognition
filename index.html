@@ -76,13 +76,22 @@
     });
 
     recognition.onresult = (event) => {
-      let finalTranscript = "";
-      for (let i = 0; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
+      let interimTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+
+      // Hvis resultatet er final (færdigbehandlet)
+      if (event.results[i].isFinal) {
         finalTranscript += transcript + " ";
+      } else {
+        // Hvis resultatet er interim (delvist)
+        interimTranscript += transcript + " ";
       }
-      transcripts.textContent = finalTranscript.trim();
-    };
+  }
+
+  // Opdater transkription i UI
+  transcripts.textContent = finalTranscript.trim() + " " + interimTranscript.trim();
+};
 
     recognition.onstart = () => {
       startButton.disabled = true;
