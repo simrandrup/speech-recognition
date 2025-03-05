@@ -51,7 +51,7 @@
 <button id="start-btn">Start recognition</button>
 <button id="stop-btn" disabled>Stop recognition</button>
 <div id="output">
-  <h3>Recognizeddd speech:</h3>
+  <h3>Recognized speech:</h3>
   <p id="transcripts"></p>
 </div>
 
@@ -76,23 +76,23 @@
     });
 
     recognition.onresult = (event) => {
-  let interimTranscript = "";
-  for (let i = event.resultIndex; i < event.results.length; i++) {
-    const transcript = event.results[i][0].transcript;
+      let interimTranscript = "";
+      let finalTranscript = ""; // Tilføjet variabel til final resultater
 
-    // Hvis resultatet er interim (delvist), gem det
-    if (!event.results[i].isFinal) {
-      interimTranscript += transcript + " ";
-    }
-  }
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
 
-  // Opdater transkription i UI med delvise resultater
-  transcripts.textContent = interimTranscript.trim();
-};
+        // Hvis resultatet er interim (delvist), gem det
+        if (!event.results[i].isFinal) {
+          interimTranscript += transcript + " ";
+        } else {
+          finalTranscript += transcript + " ";
+        }
+      }
 
-  // Opdater transkription i UI
-  transcripts.textContent = finalTranscript.trim() + " " + interimTranscript.trim();
-};
+      // Opdater transkription i UI med delvise resultater
+      transcripts.textContent = finalTranscript.trim() + " " + interimTranscript.trim();
+    };
 
     recognition.onstart = () => {
       startButton.disabled = true;
