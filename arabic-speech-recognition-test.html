@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arabic speech recognition test site for handsfree cooking project</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    select {
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+<h1>Handfree cooking - Arabic speech recognition test</h1>
+<label for="dialect-select">Choose Arabic Dialect:</label>
+<select id="dialect-select">
+  <option value="ar">Standard Arabic (MSA)</option>
+  <option value="ar-EG">Egyptian Arabic</option>
+  <option value="ar-SA">Saudi Arabic</option>
+  <option value="ar-MA">Moroccan Arabic</option>
+  <option value="ar-TN">Tunisian Arabic</option>
+  <option value="ar-DZ">Algerian Arabic</option>
+  <option value="ar-JO">Jordanian Arabic</option>
+  <option value="ar-LB">Lebanese Arabic</option>
+  <option value="ar-IQ">Iraqi Arabic</option>
+  <option value="ar-AE">Emirati Arabic</option>
+  <option value="da">Dansk</option>
+  <option value="en">English</option>
+</select>
+<br><br>
+<button id="start-btn">Start recognition</button>
+<button id="stop-btn" disabled>Stop recognition</button>
+<div id="output">
+  <h3>Recognized speech:</h3>
+  <p id="transcripts"></p>
+</div>
+
+<script>
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("Use Chrome or Safari to enable speech recognition");
+  } else {
+    const recognition = new SpeechRecognition();
+    const dialectSelect = document.getElementById("dialect-select");
+    recognition.mode = 'ondevice-only';
+    recognition.lang = dialectSelect.value;
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    const startButton = document.getElementById("start-btn");
+    const stopButton = document.getElementById("stop-btn");
+    const transcripts = document.getElementById("transcripts");
+
+    dialectSelect.addEventListener("change", () => {
+      recognition.lang = dialectSelect.value;
+    });
+
+    recognition.onresult = (event) => {
+      let finalTranscript = "";
+      for (let i = 0; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        finalTranscript += transcript + " ";
+      }
+      transcripts.textContent = finalTranscript.trim();
+    };
+
+    recognition.onstart = () => {
+      startButton.disabled = true;
+      stopButton.disabled = false;
+    };
+
+    recognition.onend = () => {
+      startButton.disabled = false;
+      stopButton.disabled = true;
+    };
+
+    startButton.addEventListener("click", () => recognition.start());
+    stopButton.addEventListener("click", () => recognition.stop());
+  }
+</script>
+</body>
+</html>
